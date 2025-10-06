@@ -9,7 +9,7 @@ namespace Automatis.Models
     public class Customer
     {
         public int Id { get; set; }
-        public string Name { get; set; }
+        public string Name { get; set; } = string.Empty;
 
         // En kund kan ha flera bilar
         public List<Car> Cars { get; set; } = new List<Car>();
