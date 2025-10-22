@@ -1,5 +1,8 @@
-﻿using Automatis.Data;
+﻿using System.Reflection;
+using System.Threading.Channels;
+using Automatis.Data;
 using Automatis.Models;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 namespace Automatis
 
 {
@@ -42,16 +45,16 @@ namespace Automatis
                     {
                         case "1":
                             VisaKunder(db);
-                            paus();
+                            Paus();
                             break;
 
                         case "2":
                             LäggTillKund(db);
-                            Pause();
+                            Paus();
                             break;
                         case "3":
                             LäggTillBill(db);
-                            Pause();
+                            Paus();
                             break;
                         case "4":
                             TaBort();
@@ -63,7 +66,7 @@ namespace Automatis
                             break;
                         default:
                             Console.WriteLine("Fel val, försök igen");
-                            Pause();
+                            Paus();
                             break;
                     }
                 }
@@ -78,7 +81,7 @@ namespace Automatis
 
         //lägger in några kunder med bilar första gången programmet körs
 
-        static void InitDemoData(AppDbContext)
+        static void InitDemoData(AppDbContext db)
         {
             if (db.Customers.Any())
                 return; //redan data gör inget
@@ -86,7 +89,7 @@ namespace Automatis
             Console.WriteLine("Skapar Demodata");
 
             var kunder = new List<Customer>
-            { 
+            {
                 new Customer
                 {
                     Name = "Mesgun",
@@ -96,17 +99,82 @@ namespace Automatis
                         new Car { Brand = "Volvo", Model = "XC90", Year = 2022}
 
 
+
                     }
 
 
                 },
+                new Customer
+                {
+                    Name = "Sara",
+                    Cars = new List<Car>
+                    {
+                        new Car {Brand = "Tesla", Model = "Model 3", Year = 2023}
+                    }
+                },
 
-            
-            }
-           
+                new Customer
+                {
+                    Name = "Adam",
+                    Cars = new List<Car>
+                    {
+                        new Car {Brand = "Audi", Model = "A6", Year = 2021}
+                    }
+                }
+            };
+
+            db.Customers.AddRange(kunder);
+            db.SaveChanges();
 
         }
 
+        // Test: visar alla kunder med deras bilar
+        static void VisaKunder(AppDbContext db)
+        {
+            Console.WriteLine("visa alla kunder och bilar");
+            
+            var Kunder = db.Customers.ToList();
+            Console.WriteLine($"Antal kunder i databasen: {Kunder.Count}");
 
+            foreach (var K in Kunder)
+            {
+                Console.WriteLine($"Kund: {K.Name}");
+                var bilar = db.Cars.Where(c => c.CustomerId == K.Id).ToList();
+                
+                if (bilar.Count == 0)
+                {
+                    Console.WriteLine("(Ingen bil registrerad)");
+                }
+                else
+                {
+                    foreach(var bil in bilar)
+                        Console.WriteLine($" Bil: {bil.Brand} ({bil.Year})");
+                }
+            }
+        }
+
+        // lägg till en ny kund med en bil
+        static void LäggTillKund(AppDbContext db)
+        {
+            Console.WriteLine("Test: lägg till ny kund med bil");
+
+        }
+
+        // Lägg till en till bil
+        static void LäggTillBil(AppDbContext db)
+        {
+            Console.WriteLine("Test: Lägg till bil till kund");
+
+            var kund =  Väljkund(db);
+            if (kund == null)
+                return;
+        }
+
+
+        static void Paus()
+        {
+            Console.WriteLine("\nTryck på valfri tanget för att fortsätta.");
+            Console.ReadKey();
+        }
     }
 }
