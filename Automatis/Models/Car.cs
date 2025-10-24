@@ -13,7 +13,7 @@ namespace Automatis.Models
         public int Id { get; set; }
         public string Brand { get; set; } = string.Empty;
         public string Model { get; set; } = string.Empty;
-        public int Year { get; set; }
+        public int Years { get; set; }
 
         // Relation till Customer
         public int CustomerId { get; set; }

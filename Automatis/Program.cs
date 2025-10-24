@@ -95,8 +95,8 @@ namespace Automatis
                     Name = "Mesgun",
                     Cars = new List<Car>
                     {
-                        new Car { Brand = "BMW", Model = "M8", Year = 2024},
-                        new Car { Brand = "Volvo", Model = "XC90", Year = 2022}
+                        new Car { Brand = "BMW", Model = "M8", Years = 2024},
+                        new Car { Brand = "Volvo", Model = "XC90", Years = 2022}
 
 
 
@@ -109,7 +109,7 @@ namespace Automatis
                     Name = "Sara",
                     Cars = new List<Car>
                     {
-                        new Car {Brand = "Tesla", Model = "Model 3", Year = 2023}
+                        new Car {Brand = "Tesla", Model = "Model 3", Years = 2023}
                     }
                 },
 
@@ -118,7 +118,7 @@ namespace Automatis
                     Name = "Adam",
                     Cars = new List<Car>
                     {
-                        new Car {Brand = "Audi", Model = "A6", Year = 2021}
+                        new Car {Brand = "Audi", Model = "A6", Years = 2021}
                     }
                 }
             };
@@ -148,7 +148,7 @@ namespace Automatis
                 else
                 {
                     foreach(var bil in bilar)
-                        Console.WriteLine($" Bil: {bil.Brand} ({bil.Year})");
+                        Console.WriteLine($" Bil: {bil.Brand} ({bil.Years})");
                 }
             }
         }
@@ -158,7 +158,25 @@ namespace Automatis
         {
             Console.WriteLine("Test: lägg till ny kund med bil");
 
-            
+           int föreAntal = db.Customers.Count();
+            Console.WriteLine($"Antal Kunder före: {föreAntal}");
+
+            string namn = LäsText("Ange kundens namn: ");
+            string märke = LäsText("Ange bilmärke: ");
+            string modell = LäsText("Ange bilmodell: ");
+            int år = LäsInt("Ange årsmodell: ", 1900, DateTime.Now.Year + 1);
+
+            var kund = new Customer { Name = namn };
+            db.Customers.Add(kund);
+            db.SaveChanges();
+
+            var bil = new Car { Brand = märke, Model = modell, Years = år, CustomerId = kund.Id };
+            db.Cars.Add(bil);
+            db.SaveChanges();
+
+            int efterAntal = db.Customers.Count();
+            Console.WriteLine($"Klar! Antal kunder efter: {efterAntal}");
+
 
         }
 
@@ -178,7 +196,7 @@ namespace Automatis
             string modell = LäsText("Ange bilmodell");
             int år = LäsInt("Ange årsmodell ): ", 1900, DateTime.Now.Year + 1 );
 
-            var nyBil = new Car { Brand = märke, Model = modell, Year = år, CustomerId = Kund.Id };
+            var nyBil = new Car { Brand = märke, Model = modell, Years = år, CustomerId = Kund.Id };
             db.Cars.Add(nyBil);
             db.SaveChanges();
 
@@ -217,7 +235,7 @@ namespace Automatis
                 for (int i = 0; i < bilar.Count; i++)
                 {
                     var owner = db.Customers.FirstOrDefault(c => c.Id == bilar[i].CustomerId);
-                    Console.WriteLine($"{i + 1}. {bilar[i].Brand} {bilar[i].Model} ({bilar[i].Year}) - Ägare: {owner?.Name}");
+                    Console.WriteLine($"{i + 1}. {bilar[i].Brand} {bilar[i].Model} ({bilar[i].Years}) - Ägare: {owner?.Name}");
 
                 }
                 int index = LäsInt("Ange bilnummer: ", 1, bilar.Count) - 1;
